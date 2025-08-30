@@ -1,0 +1,68 @@
+/* src/pages/Login.css */
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+.login-form {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: auto;
+  padding: 30px;
+  min-width: 340px;
+  border: 1px solid #d1d5db; 
+  border-radius: 12px;
+  color: #374151; 
+  font-size: 14px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.login-container p.title {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.login-container input {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  width: 100%;
+  padding: 12px;           
+  margin-top: 6px;
+  font-size: 15px;
+  box-sizing: border-box;  
+}
+
+.login-container button {
+  background-color: #6366f1;
+  color: white;
+  width: 100%;
+  padding: 12px;          
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  box-sizing: border-box;  
+}
+
+.login-container button:hover {
+  background-color: #4f46e5;
+}
+
+
+.login-container span {
+  color: #6366f1;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.login-container p.title.center {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 8px;
+}
