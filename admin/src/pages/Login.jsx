@@ -2,6 +2,7 @@ import React, { useState,useContext } from 'react'
 import { assets } from '../assets/assets'
 import axios from "axios";
 import { AdminContext } from '../context/AdminContext.jsx';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const [state, setState] = useState('Admin')
@@ -19,10 +20,11 @@ const Login = () => {
         })
 
         if (data.success) {
-          //localStorage.setItem("aToken", data.token)
-          setAToken(data.token)
+        localStorage.setItem("aToken", data.token)   // persist token
+        setAToken(data.token)                        // update context state
+        localStorage.setItem(setAToken, data.token)
         } else {
-          // toast.error(data.message)
+          toast.error(data.message)
         }
       } else {
         // handle customer login here if needed
