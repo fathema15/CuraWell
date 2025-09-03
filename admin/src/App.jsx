@@ -30,7 +30,7 @@ const App = () => {
     <div className="bg-[#F8F9FD]">
       <ToastContainer />
      <Navbar/>
-     <div className="flex-item-start">
+     <div className="flex items-start">
       <Sidebar/>
       <Routes>
           {/* Admin Route */}
