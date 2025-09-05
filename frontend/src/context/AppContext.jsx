@@ -1,7 +1,8 @@
 import { createContext } from "react";
+
 import { doctors, drugCategories, drugs } from "../assets/assets_frontend/assets";
 
-export const AppContext = createContext();
+export const AppContext = createContext({});
 
 const AppContextProvider = (props) => {
     const currencysymbol ='$'
