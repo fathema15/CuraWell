@@ -1,112 +1,57 @@
-// ;
-// import React, { createContext, useState } from "react";
-// import axios from "axios";
-// import { ToastContainer, toast } from "react-toastify";
-// import 'react-toastify/dist/ReactToastify.css';
-// import { useEffect } from "react";
-
-// // eslint-disable-next-line react-refresh/only-export-components
-// export const AdminContext = createContext();
-
-// const AdminContextProvider = (props) => {
-//   // Load token from localStorage when app starts
-//   const [aToken, setAToken] = useState(localStorage.getItem("aToken") ? localStorage.getItem("aToken") : "");
-//   const [doctors, setDoctors] = useState([]);
-//   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-//   // // Keep localStorage in sync with context state
-//   // useEffect(() => {
-//   //   if (aToken) {
-//   //     localStorage.setItem("aToken", aToken);
-//   //   } else {
-//   //     localStorage.removeItem("aToken");
-//   //   }
-//   //const { getAllDoctors, doctors } = useContext(AdminContext);
-
-  
-
-//   const getAllDoctors = async () => {
-//     try {
-//       const { data } = await axios.post(
-//         backendUrl + "/api/admin/all-doctors",
-//         {},
-//         { headers: { aToken } }
-//       );
-//       if (data.success) {
-//         setDoctors(data.doctors);
-//         console.log(data.doctors);
-//       } else {
-//         toast.error(data.message);
-//       }
-//     } catch (error) {
-//       toast.error(error.message);
-//     }
-//   };
-//   useEffect(() => {
-//   getAllDoctors(); // ← you must call it here
-//   }, []);
-//   const value = {
-//     aToken,
-//     setAToken,
-//     backendUrl,
-//     doctors,
-//     getAllDoctors
-//   };
-
-//   return (
-//     <AdminContext.Provider value={value}>
-//       {props.children}
-//     </AdminContext.Provider>
-//   );
-// };
-
-// export default AdminContextProvider;
-import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { createContext, useState } from "react";
+import { toast } from "react-toastify";
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const AdminContext = createContext();
 
 const AdminContextProvider = (props) => {
-  // Load token from localStorage when app starts
-  const [aToken, setAToken] = useState(localStorage.getItem("aToken") || "");
-  const [doctors, setDoctors] = useState([]);
-  const [appointments, setAppointments] = useState([]);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  // Function to fetch all doctors
+  const [aToken, setAToken] = useState(localStorage.getItem("aToken") || "");
+
+  const [appointments, setAppointments] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [drugs, setDrugs] = useState([]);
+  const [orders, setOrders] = useState([]); // ✅ orders state
+  const [dashData, setDashData] = useState(false);
+
+  // ================= DOCTORS =================
   const getAllDoctors = async () => {
     try {
-      const { data } = await axios.post(
-        backendUrl + "/api/admin/all-doctors",
-        {},
-        { headers:{aToken}}
-      );
-
-      if (data.success) {
-        setDoctors(data.doctors);
-        console.log(data.doctors);
-      } else {
-        toast.error(data.message);
-      }
+      const { data } = await axios.get(`${backendUrl}/api/admin/all-doctors`, {
+        headers: { aToken },
+      });
+      if (data.success) setDoctors(data.doctors);
+      else toast.error(data.message);
     } catch (error) {
       toast.error(error.message);
     }
   };
+
+  const changeAvailability = async (docId) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/admin/change-availability`,
+        { docId },
+        { headers: { aToken } }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        getAllDoctors();
+      } else toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // ================= APPOINTMENTS =================
   const getAllAppointments = async () => {
     try {
-      const { data } = await axios.get(backendUrl + "/api/admin/appointments", {
+      const { data } = await axios.get(`${backendUrl}/api/admin/appointments`, {
         headers: { aToken },
       });
-
-      if (data.success) {
-        setAppointments(data.appointments);
-        console.log(data.appointments);
-      } else {
-        toast.error(data.message);
-      }
+      if (data.success) setAppointments(data.appointments.reverse());
+      else toast.error(data.message);
     } catch (error) {
       toast.error(error.message);
     }
@@ -115,50 +60,96 @@ const AdminContextProvider = (props) => {
   const cancelAppointment = async (appointmentId) => {
     try {
       const { data } = await axios.post(
-        backendUrl + "/api/admin/cancel-appointment",
+        `${backendUrl}/api/admin/cancel-appointment`,
         { appointmentId },
         { headers: { aToken } }
       );
       if (data.success) {
         toast.success(data.message);
         getAllAppointments();
-      } else {
-        toast.error(data.message);
-      }
+      } else toast.error(data.message);
     } catch (error) {
       toast.error(error.message);
     }
   };
 
-  // Fetch doctors when provider mounts
-  useEffect(() => {
-    if (aToken) getAllDoctors();
-  }, [aToken]);
+  // ================= DRUGS =================
+  const getAllDrugs = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/admin/all-drugs`, {
+        headers: { aToken },
+      });
+      if (data.success) setDrugs(data.drugs);
+      else toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
-  // // Keep localStorage in sync with token
-  // useEffect(() => {
-  //   if (aToken) {
-  //     localStorage.setItem("aToken", aToken);
-  //   } else {
-  //     localStorage.removeItem("aToken");
-  //   }
-  // }, [aToken]);
+  // ================= ORDERS =================
+  const getAllOrders = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/admin/all-orders`, {
+        headers: { aToken },
+      });
+      if (data.success) setOrders(data.orders.reverse());
+      else toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
+  const updateOrderStatus = async (orderId, status) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/admin/update-order-status`,
+        { orderId, status },
+        { headers: { aToken } }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        getAllOrders();
+      } else toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // ================= DASHBOARD =================
+  const getDashData = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/admin/dashboard`, {
+        headers: { aToken },
+      });
+      if (data.success) setDashData(data.dashData);
+      else toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // ================= VALUE =================
   const value = {
     aToken,
     setAToken,
-    backendUrl,
     doctors,
-    appointments,  
     getAllDoctors,
+    changeAvailability,
+    appointments,
     getAllAppointments,
     cancelAppointment,
+    drugs,
+    getAllDrugs,
+    orders,
+    getAllOrders, 
+    updateOrderStatus, 
+    dashData,
+    getDashData,
   };
 
   return (
     <AdminContext.Provider value={value}>
       {props.children}
-      <ToastContainer /> {/* Add ToastContainer once in the provider */}
     </AdminContext.Provider>
   );
 };

@@ -13,33 +13,39 @@ import Footer from './components/Footer'
 import MyCart from './pages/MyCart'
 import BuyDrug from './pages/BuyDrug'
 import DrugStore from './pages/DrugStore'
-import { CartProvider } from './context/CartContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Verify from './pages/Verify'
+import MyOrders from './pages/MyOrders'
 
 const App = () => {
   return (
-    <CartProvider>
-      <div className='mx-4 sm:mx-[10%]'>
-        <Navbar/>
-        <Routes> 
-          <Route path='/' element={<Home />}/>
-          <Route path='/doctors' element={<Doctors />}/>
-          <Route path='/doctors/:specialty' element={<Doctors />}/>
-          <Route path='/login' element={<Login />}/>
-          <Route path='/about' element={<About />}/>
-          <Route path='/contact' element={<Contact />}/>
-          <Route path='/my-profile' element={<MyProfile />}/>
-          <Route path='/my-appointments' element={<MyAppointments />}/>
-          <Route path='/appointment/:docId' element={<Appointment />}/>
-          <Route path='/my-appointments' element={<MyAppointments />}/>
-          <Route path='/my-carts' element={<MyCart />}/>
-          <Route path='/buy-drugs/drugId' element={<BuyDrug />}/>
-          <Route path='/drugstore' element={<DrugStore />}/>
-          <Route path='/drugstore/:category' element={<DrugStore />}/>
+    <div className='mx-4 sm:mx-[10%]'>
+      <ToastContainer/>
+      <Navbar/>
+      <Routes> 
+        <Route path='/' element={<Home />}/>
+        <Route path='/doctors' element={<Doctors />}/>
+        <Route path='/drugs' element={<DrugStore />}/>
+        <Route path='/doctors/:speciality' element={<Doctors />}/>
+        <Route path='/drugs/:category' element={<DrugStore />}/>
+        <Route path='/login' element={<Login />}/>
+        <Route path='/about' element={<About />}/>
+        <Route path='/contact' element={<Contact />}/>
+        <Route path='/my-profile' element={<MyProfile />}/>
+        <Route path='/my-appointments' element={<MyAppointments />}/>
+        <Route path='/appointment/:docId' element={<Appointment />}/>
+        <Route path='/my-orders' element={<MyOrders />}/>
+        <Route path='/my-carts' element={<MyCart />}/>
+        <Route path='/buy-drugs/:drugId' element={<BuyDrug />}/>
+        <Route path='/drugstore' element={<DrugStore />}/>
+        <Route path='/drugstore/:category' element={<DrugStore />}/>
+        <Route path='/verify' element={<Verify />} />
+        <Route path='/my-cart' element={<MyCart />} />
 
-        </Routes>
-        <Footer/>
-      </div>
-    </CartProvider>
+      </Routes>
+      <Footer/>
+    </div>
   )
 }
 

@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
-import { AdminContext } from "../context/AdminContext.jsx";
-import { NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
-import { DocContext } from "../context/DocContext.jsx";
+import { NavLink } from "react-router-dom";
+import { DoctorsContext } from "../context/DoctorsContext";
+import { AdminContext } from "../context/AdminContext";
 
 const Sidebar = () => {
+  const { dToken } = useContext(DoctorsContext);
   const { aToken } = useContext(AdminContext);
 
   return (
@@ -12,54 +13,134 @@ const Sidebar = () => {
       {aToken && (
         <ul className="text-[#515151] mt-5">
           <NavLink
+            to={"/admin-dashboard"}
             className={({ isActive }) =>
               `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/admin-dashboard"}
           >
-            <img src={assets.home_icon} alt="" />
+            <img className="min-w-5" src={assets.home_icon} alt="" />
             <p className="hidden md:block">Dashboard</p>
           </NavLink>
 
           <NavLink
+            to={"/all-appointments"}
             className={({ isActive }) =>
               `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/all-appointments"}
           >
-            <img src={assets.appointment_icon} alt="" />
+            <img className="min-w-5" src={assets.appointment_icon} alt="" />
             <p className="hidden md:block">Appointments</p>
           </NavLink>
 
           <NavLink
+            to={"/all-orders"}
             className={({ isActive }) =>
               `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/add-doctor"}
           >
-            <img src={assets.add_icon} alt="" />
+            <img className="min-w-5" src={assets.order_icon} alt="" />
+            <p className="hidden md:block">Orders</p>
+          </NavLink>
+
+          <NavLink
+            to={"/add-doctor"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
+              }`
+            }
+          >
+            <img className="min-w-5" src={assets.add_icon} alt="" />
             <p className="hidden md:block">Add Doctor</p>
           </NavLink>
 
           <NavLink
+            to={"/doctor-list"}
             className={({ isActive }) =>
               `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
                 isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
               }`
             }
-            to={"/doctor-list"}
           >
-            <img src={assets.people_icon} alt="" />
+            <img className="min-w-5" src={assets.people_icon} alt="" />
             <p className="hidden md:block">Doctors List</p>
           </NavLink>
+
+          <NavLink
+            to={"/add-drug"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer rounded ${
+                isActive
+                  ? "bg-[#F2F3FF] border-r-4 border-primary"
+                  : "hover:bg-[#F2F3FF]"
+              }`
+            }
+          >
+            <img className="min-w-5" src={assets.add_medicine_icon} alt="" />
+            <p className="hidden md:block">Add Drug</p>
+          </NavLink>
+
+          <NavLink
+            to={"/drug-list"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer rounded ${
+                isActive
+                  ? "bg-[#F2F3FF] border-r-4 border-primary"
+                  : "hover:bg-[#F2F3FF]"
+              }`
+            }
+          >
+            <img className="min-w-5" src={assets.drug_list} alt="" />
+            <p className="hidden md:block">Drug List</p>
+          </NavLink>
         </ul>
-      )}       
+      )}
+
+      {dToken && (
+        <ul className="text-[#515151] mt-5">
+          <NavLink
+            to={"/doctor-dashboard"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
+              }`
+            }
+          >
+            <img className="min-w-5" src={assets.home_icon} alt="" />
+            <p className="hidden md:block">Dashboard</p>
+          </NavLink>
+
+          <NavLink
+            to={"/doctor-appointments"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
+              }`
+            }
+          >
+            <img className="min-w-5" src={assets.appointment_icon} alt="" />
+            <p className="hidden md:block">Appointments</p>
+          </NavLink>
+
+          <NavLink
+            to={"/doctor-profile"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                isActive ? "bg-[#F2F3FF] border-r-4 border-primary" : ""
+              }`
+            }
+          >
+            <img className="min-w-5" src={assets.people_icon} alt="" />
+            <p className="hidden md:block">Profile</p>
+          </NavLink>
+        </ul>
+      )}
     </div>
   );
 };

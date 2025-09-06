@@ -1,5 +1,5 @@
 import React from "react";
-import { assets } from "../assets/assets_frontend/assets";
+import { assets } from "../assets/assets/assets";
 
 const Footer = () => {
   return (
@@ -32,7 +32,7 @@ const Footer = () => {
           <p className="text-xl font-medium mb-5 ">GET IN TOUCH</p>
           <ul className="flex flex-col gap-2 text-gray-600">
             <li>+88-01267-891003 </li>
-            <li>prescripto@gmail.com</li>
+            <li>dr.pharmedic@gmail.com</li>
           </ul>
         </div>
       </div>

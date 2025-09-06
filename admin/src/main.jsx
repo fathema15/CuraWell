@@ -1,23 +1,23 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { BrowserRouter } from 'react-router-dom'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+import { BrowserRouter } from "react-router-dom";
 import AdminContextProvider from "./context/AdminContext.jsx";
-import DocContextProvider from './context/DocContext.jsx';
-import AppContextProvider from './context/AppContext.jsx';
+import DoctorsContextProvider from "./context/DoctorsContext.jsx";
+import AppContextProvider from "./context/AppContext.jsx";
+import DrugContextProvider from "./context/DrugContext.jsx";
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <BrowserRouter>
     <AdminContextProvider>
-      <DocContextProvider>
-        <AppContextProvider>
-          <BrowserRouter>
-          <App />
-          </BrowserRouter>
-        </AppContextProvider>
-      </DocContextProvider>
+      <DoctorsContextProvider>
+        <DrugContextProvider>
+          <AppContextProvider>
+            <App />
+          </AppContextProvider>
+        </DrugContextProvider>
+      </DoctorsContextProvider>
     </AdminContextProvider>
-  </StrictMode>,
-)
- 
+  </BrowserRouter>
+);

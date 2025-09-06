@@ -1,80 +1,207 @@
-import React, { useContext } from "react";
-import { CartContext } from "../context/CartContext";
+// src/pages/MyCart.jsx
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const MyCart = () => {
-  const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
+  const { cart, setCart, backendUrl, token, currencySymbol, loadUserCart } =
+    useContext(AppContext);
   const navigate = useNavigate();
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.unit_price, 0);
+  const [discount, setDiscount] = useState(0);
+  const [isPaid, setIsPaid] = useState(false);
 
-  if (cartItems.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center mt-20">
-        <p className="text-gray-600 text-lg mb-4">Your cart is empty.</p>
-        <button
-          onClick={() => navigate("/drugstore")}
-          className="bg-indigo-500 text-white px-6 py-2 rounded-full hover:opacity-90 transition"
-        >
-          Browse Drugs
-        </button>
-      </div>
-    );
-  }
+  // Calculate subtotal dynamically
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.quantity * item.price,
+    0
+  );
+  const total = subtotal - discount;
+
+  // Remove item from cart
+  const removeItem = async (drugId) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/cart/remove`,
+        { drugId },
+        { headers: { token } }
+      );
+      if (data.success) {
+        await loadUserCart(); // refresh cart from backend
+        toast.success(data.message || "Removed from cart");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // Apply discount
+  const applyDiscount = () => {
+    if (cart.some((item) => item.quantity > item.stock)) {
+      return toast.error("Some items are out of stock!");
+    }
+    if (discount > 0) return toast.info("Discount already applied");
+    const disc = subtotal * 0.1;
+    setDiscount(disc);
+    toast.success("10% discount applied!");
+  };
+
+  // Handle Pay Now
+  const handlePayNow = () => {
+    if (cart.some((item) => item.quantity > item.stock)) {
+      return toast.error("Some items are out of stock!");
+    }
+    if (cart.length === 0) return toast.info("Cart is empty");
+    setIsPaid(true);
+    toast.success("Payment successful!");
+  };
+
+  // Handle Order Now
+  const handleOrderNow = async () => {
+    if (cart.some((item) => item.quantity > item.stock)) {
+      return toast.error("Some items are out of stock!");
+    }
+    if (!isPaid) return toast.info("Please pay first");
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/order/create`,
+        {},
+        { headers: { token } }
+      );
+      if (data.success) {
+        toast.success("Order placed successfully!");
+        setCart([]);
+        setIsPaid(false);
+        navigate("/my-orders");
+      } else toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    loadUserCart();
+  }, []);
+
+  // Check if any item is out of stock
+  const hasOutOfStock = cart.some((item) => item.quantity > item.stock);
 
   return (
-    <div className="my-10">
-      <h2 className="text-2xl font-semibold mb-6">My Cart</h2>
-      <div className="flex flex-col gap-6">
-        {cartItems.map((item, index) => (
-          <div
-            key={index}
-            className="flex flex-col sm:flex-row border border-gray-200 rounded-xl overflow-hidden shadow-sm"
-          >
-            <img
-              src={item.image}
-              alt={item.name}
-              className="h-40 w-full sm:w-40 object-contain bg-gray-50"
-            />
-            <div className="p-4 flex flex-col justify-between flex-1">
-              <div>
-                <p className="text-gray-900 font-medium text-lg">{item.name}</p>
-                <p className="text-gray-600 text-sm mb-1">{item.company}</p>
-                <p className="text-sm text-gray-700 mb-2">{item.category}</p>
-                <p className="text-gray-800 text-sm mb-2">
-                  <span className="font-semibold">Unit Price:</span> {item.unit_price}
-                </p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                  onClick={() => removeFromCart(item._id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-full hover:opacity-90 transition"
-                >
-                  Remove
-                </button>
-                <p className="text-gray-800 font-semibold">Unit Price: {item.unit_price}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-8 bg-indigo-50 p-6 rounded-xl">
-        <p className="text-gray-900 font-semibold text-lg">
-          Total Price: <span className="text-indigo-600">{totalPrice}</span>
-        </p>
-        <div className="flex gap-4 mt-4 sm:mt-0">
+    <div className="max-w-4xl mx-auto my-10 px-4 sm:px-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">My Cart</h1>
+        <div className="flex gap-2">
           <button
-            onClick={() => navigate("/drugstore")}
-            className="bg-indigo-500 text-white px-6 py-2 rounded-full hover:opacity-90 transition"
+            onClick={() => navigate("/drugs")}
+            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
           >
-            Continue Shopping
+            Add More
           </button>
           <button
-            onClick={clearCart}
-            className="bg-red-500 text-white px-6 py-2 rounded-full hover:opacity-90 transition"
+            onClick={() => navigate("/my-orders")}
+            className="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600"
           >
-            Clear Cart
+            Order History
+          </button>
+        </div>
+      </div>
+
+      {/* Cart Items */}
+      <div className="space-y-4">
+        {cart.length === 0 && <p>Your cart is empty.</p>}
+        {cart.map((item) => {
+          const isOutOfStock = item.quantity > item.stock;
+          return (
+            <div
+              key={item._id}
+              className="flex justify-between items-center border rounded p-4 bg-white"
+            >
+              <div className="flex items-center gap-4">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-16 h-16 object-contain"
+                />
+                <div>
+                  <p className="font-medium">{item.name}</p>
+                  <p className="text-gray-600">
+                    Quantity: {item.quantity} | Unit Price: {currencySymbol}
+                    {item.price}
+                  </p>
+                  <p className="text-gray-700 font-medium">
+                    Total: {currencySymbol}
+                    {item.quantity * item.price}
+                  </p>
+                  <p
+                    className={`font-semibold ${
+                      isOutOfStock ? "text-red-500" : "text-green-500"
+                    }`}
+                  >
+                    {isOutOfStock ? "Out of Stock" : "In Stock"}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => removeItem(item._id)}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Remove
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Order Summary */}
+      <div className="border rounded p-4 bg-white space-y-2">
+        <p className="text-lg font-semibold">Order Summary</p>
+        <p>
+          Subtotal: {currencySymbol}
+          {subtotal.toFixed(2)}
+        </p>
+        <p>
+          Discount: {currencySymbol}
+          {discount.toFixed(2)}
+        </p>
+        <p className="font-semibold">
+          Total: {currencySymbol}
+          {total.toFixed(2)}
+        </p>
+
+        <div className="flex gap-3 mt-3 flex-wrap">
+          <button
+            onClick={applyDiscount}
+            className={`px-4 py-2 rounded text-white 
+               ${
+                hasOutOfStock
+                ? "bg-yellow-500 cursor-not-allowed"
+                : "bg-yellow-500 hover:bg-yellow-300"
+              }`}
+            disabled={hasOutOfStock}
+          >
+            Get 10% Discount
+          </button>
+          <button
+            onClick={handlePayNow}
+            className={`px-4 py-2 rounded text-white ${
+              isPaid|| hasOutOfStock
+                ? "bg-green-300 cursor-not-allowed" 
+                : "bg-green-500 hover:bg-green-600"
+            }`}
+            disabled={isPaid || hasOutOfStock}
+          >
+            {isPaid ? "Paid" : "Pay Now"}
+          </button>
+          <button
+            onClick={handleOrderNow}
+            className={`px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ${
+              !isPaid ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={!isPaid || hasOutOfStock}
+          >
+            Order Now
           </button>
         </div>
       </div>
@@ -83,3 +210,4 @@ const MyCart = () => {
 };
 
 export default MyCart;
+

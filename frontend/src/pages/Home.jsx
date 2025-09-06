@@ -3,7 +3,7 @@ import Header from '../components/Header'
 import SpecialityMenu from '../components/SpecialityMenu'
 import TopDoctors from '../components/TopDoctors'
 import Banner from '../components/Banner'
-import DrugCategoryMenu from '../components/DrugCategoryMenu'
+import CategoryMenu from '../components/CategoryMenu'
 import TopDrugs from '../components/TopDrugs'
 
 const Home = () => {
@@ -11,7 +11,7 @@ const Home = () => {
     <div>
       <Header/>
       <SpecialityMenu/>
-      <DrugCategoryMenu/>
+      <CategoryMenu/>
       <TopDoctors/>
       <TopDrugs/>
       <Banner/>

@@ -11,6 +11,11 @@ import tick_icon from './tick_icon.svg'
 import appointments_icon from './appointments_icon.svg'
 import earning_icon from './earning_icon.svg'
 import patients_icon from './patients_icon.svg'
+import medicine_icon from './medicine_icon.png'
+import add_medicine_icon from './add_medicine_icon.svg'
+import drug_list from './drug_list.svg'
+import order_icon from './order_icon.svg'
+import order from './orders.svg'
 
 export const assets = {
     add_icon,
@@ -25,5 +30,10 @@ export const assets = {
     list_icon,
     tick_icon,
     appointments_icon,
-    earning_icon
+    earning_icon,
+    medicine_icon,
+    add_medicine_icon,
+    drug_list,
+    order_icon,
+    order
 }

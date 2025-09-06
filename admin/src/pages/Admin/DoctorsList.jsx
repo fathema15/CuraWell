@@ -1,15 +1,15 @@
-import React,{useContext,useEffect} from 'react';
-import { AdminContext } from '../../context/AdminContext';
+import React, { useContext, useEffect } from "react";
+import { AdminContext } from "../../context/AdminContext";
 
+const DoctorsList = () => {
+  const { doctors, changeAvailability, aToken, getAllDoctors } =
+    useContext(AdminContext);
 
-const DoctorsList = () => {const { doctors, aToken, getAllDoctors,changeAvailability } =
-  useContext(AdminContext);
   useEffect(() => {
-    if (aToken) {  
+    if (aToken) {
       getAllDoctors();
     }
   }, [aToken]);
-
 
   return (
     <div className="m-5 max-h-[90vh] overflow-y-scroll">
@@ -21,15 +21,13 @@ const DoctorsList = () => {const { doctors, aToken, getAllDoctors,changeAvailabi
             key={index}
           >
             <img
-              className="bg-indigo-50 group-hover:bg-primary transition-all duration-500"
+              className="bg-indigo-50 group-hover:bg-[#5f6FFF] transition-all duration-500"
               src={item.image}
               alt=""
             />
             <div className="p-4">
-              <p className="text-neutral-800 text-lg font-medium">
-                {item.name}
-              </p>
-              <p className="text-zinc-600 text-sm">{item.speciality}</p>
+              <p className="text-[#262626] text-lg font-medium">{item.name}</p>
+              <p className="text-[#5C5C5C] text-sm">{item.speciality}</p>
               <div className="mt-2 flex items-center gap-1 text-sm">
                 <input
                   onChange={() => changeAvailability(item._id)}
@@ -46,4 +44,4 @@ const DoctorsList = () => {const { doctors, aToken, getAllDoctors,changeAvailabi
   );
 };
 
-export default DoctorsList
+export default DoctorsList;
